@@ -1,0 +1,60 @@
+# CrashRace 設定ファイル
+# adminGUI (/crashrace admin) からもほとんどの値を変更できます。
+
+event:
+  # /crashrace start で分数指定を省略した場合のデフォルト時間(分)
+  default-duration-minutes: 15
+  # 1回の延長で追加する分数 (adminGUIの延長ボタン)
+  extend-step-minutes: 5
+  # 1位〜3位が全員決まったら自動的にイベントを終了するか
+  auto-end-when-full: true
+  # 同じプレイヤーが複数の順位を占めないようにするか (true推奨)
+  distinct-players-only: true
+
+watchdog:
+  # メインスレッドの心拍(heartbeat)がこの時間(ms)止まったら「クラッシュ寸前」と判定する。
+  # サーバーのWatchdogタイムアウト(spigot.yml: settings.timeout-time)より
+  # 必ず短い値を設定すること。実クラッシュより先に検知するための値です。
+  hang-threshold-ms: 8000
+  # 監視スレッドがハングをチェックする間隔(ms)
+  check-interval-ms: 500
+  # 検知後、直近何秒以内のブロック設置ログを「原因候補」として見るか
+  suspect-window-seconds: 30
+  # 同じハングを二重検知しないためのクールダウン(ms)
+  detection-cooldown-ms: 15000
+
+# 犯人特定時に使うブロック種別ごとの重み。設置数 x 重み の合計が一番高いプレイヤーを犯人と推定する。
+block-weights:
+  default: 1
+  HOPPER: 5
+  OBSERVER: 3
+  PISTON: 2
+  STICKY_PISTON: 2
+  REDSTONE_WIRE: 1
+  REDSTONE_TORCH: 1
+  REPEATER: 1
+  COMPARATOR: 1
+  TNT: 8
+  SPAWNER: 10
+  MINECART: 4
+  HOPPER_MINECART: 6
+  TNT_MINECART: 8
+  TRIPWIRE_HOOK: 1
+  DISPENSER: 3
+  DROPPER: 3
+
+mitigation:
+  # 検知後、原因チャンク周辺を自動で強制リロード・掃除するか
+  # (軽量化プラグインを別途併用する運用を想定し、対象チャンクのみに限定した処理を行う)
+  enabled: true
+  # 原因チャンクから何チャンク四方を掃除対象にするか
+  chunk-radius: 1
+  # プレイヤー以外の全エンティティを削除するか
+  clear-entities: true
+  # 対象チャンクを一度アンロードして再ロードするか
+  reload-chunk: true
+
+scoreboard:
+  # サイドバー表示の更新間隔(tick)
+  update-interval-ticks: 20
+  title: "&c&lCrashRace"

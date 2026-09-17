@@ -1,0 +1,15 @@
+name: CrashRace
+version: '${version}'
+main: com.clash.crashrace.CrashRacePlugin
+api-version: '26.3'
+author: clash
+description: 誰が一番早くサーバーを落とせるか大会用プラグイン
+commands:
+  crashrace:
+    description: CrashRace event control command
+    usage: /crashrace <start|stop|extend|reset|admin>
+    aliases: [cr, crash]
+permissions:
+  crashrace.admin:
+    description: CrashRace event operation permission
+    default: op
