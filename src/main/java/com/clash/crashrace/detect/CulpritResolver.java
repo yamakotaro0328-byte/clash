@@ -1,6 +1,7 @@
 package com.clash.crashrace.detect;
 
 import com.clash.crashrace.track.ChunkKey;
+import com.clash.crashrace.track.PlacementKind;
 import com.clash.crashrace.track.PlacementRecord;
 import com.clash.crashrace.track.PlacementTracker;
 
@@ -37,7 +38,8 @@ public final class CulpritResolver {
     public ResolvedCulprit resolve(Predicate<UUID> alreadyRanked) {
         long cutoff = System.currentTimeMillis() - suspectWindowSeconds * 1000L;
 
-        record ChunkScore(ChunkKey chunk, double total, Map<UUID, Double> perPlayer, Map<UUID, String> names) {
+        record ChunkScore(ChunkKey chunk, double total, Map<UUID, Double> perPlayer, Map<UUID, String> names,
+                          List<PlacementRecord> recentRecords) {
         }
 
         List<ChunkScore> chunkScores = new ArrayList<>();
@@ -45,6 +47,7 @@ public final class CulpritResolver {
         for (Map.Entry<ChunkKey, ConcurrentLinkedDeque<PlacementRecord>> entry : tracker.snapshot().entrySet()) {
             Map<UUID, Double> perPlayer = new HashMap<>();
             Map<UUID, String> names = new HashMap<>();
+            List<PlacementRecord> recentRecords = new ArrayList<>();
             double total = 0;
             for (PlacementRecord record : entry.getValue()) {
                 if (record.timestampMs() < cutoff) {
@@ -53,10 +56,11 @@ public final class CulpritResolver {
                 int weight = weights.getOrDefault(record.materialName(), weights.getOrDefault("DEFAULT", 1));
                 perPlayer.merge(record.playerId(), (double) weight, Double::sum);
                 names.putIfAbsent(record.playerId(), record.playerName());
+                recentRecords.add(record);
                 total += weight;
             }
             if (total > 0) {
-                chunkScores.add(new ChunkScore(entry.getKey(), total, perPlayer, names));
+                chunkScores.add(new ChunkScore(entry.getKey(), total, perPlayer, names, recentRecords));
             }
         }
 
@@ -75,7 +79,14 @@ public final class CulpritResolver {
                 }
             }
             if (bestPlayer != null) {
-                return new ResolvedCulprit(chunkScore.chunk(), bestPlayer, chunkScore.names().get(bestPlayer), bestScore);
+                List<BlockTarget> weightedBlocks = new ArrayList<>();
+                for (PlacementRecord record : chunkScore.recentRecords()) {
+                    if (record.kind() == PlacementKind.BLOCK && weights.containsKey(record.materialName())) {
+                        weightedBlocks.add(new BlockTarget(record.x(), record.y(), record.z()));
+                    }
+                }
+                return new ResolvedCulprit(chunkScore.chunk(), bestPlayer, chunkScore.names().get(bestPlayer),
+                        bestScore, weightedBlocks);
             }
         }
         return null;

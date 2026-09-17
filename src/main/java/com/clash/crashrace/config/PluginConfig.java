@@ -71,6 +71,11 @@ public final class PluginConfig {
         return cfg().getLong("watchdog.detection-cooldown-ms", 15000L);
     }
 
+    /** Heartbeat gap must drop below this before new detections resume, on top of the cooldown timer. */
+    public long recoveryThresholdMs() {
+        return cfg().getLong("watchdog.recovery-threshold-ms", 2000L);
+    }
+
     // --- block weights ---
     public Map<String, Integer> blockWeights() {
         Map<String, Integer> weights = new HashMap<>();
@@ -104,6 +109,10 @@ public final class PluginConfig {
 
     public boolean mitigationReloadChunk() {
         return cfg().getBoolean("mitigation.reload-chunk", true);
+    }
+
+    public boolean mitigationClearRedstone() {
+        return cfg().getBoolean("mitigation.clear-redstone", true);
     }
 
     // --- scoreboard ---
