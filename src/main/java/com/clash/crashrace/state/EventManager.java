@@ -141,7 +141,7 @@ public final class EventManager {
         // Hop back onto the main thread for anything touching live world/player state; this task
         // simply waits in queue if the main thread is still catching up from the hang.
         Bukkit.getScheduler().runTask(plugin, () -> {
-            mitigator.mitigate(culprit.chunk());
+            mitigator.mitigate(culprit.chunk(), culprit.weightedBlocks());
             if (entry != null) {
                 scoreboard.update(remainingMs());
                 Bukkit.broadcastMessage(ChatColor.RED + "[CrashRace] " + ChatColor.YELLOW

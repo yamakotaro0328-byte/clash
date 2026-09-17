@@ -120,7 +120,11 @@ public final class AdminGui {
                 config.hangThresholdMs() + " ms",
                 "",
                 ChatColor.GRAY + "サーバーの実際のWatchdogタイムアウトより",
-                ChatColor.GRAY + "必ず短く設定してください"));
+                ChatColor.GRAY + "必ず短く設定してください",
+                "",
+                ChatColor.DARK_GRAY + "再検知クールダウン: " + config.detectionCooldownMs() + " ms",
+                ChatColor.DARK_GRAY + "回復判定しきい値: " + config.recoveryThresholdMs() + " ms",
+                ChatColor.DARK_GRAY + "(config.ymlのwatchdog設定で調整)"));
         inventory.setItem(SLOT_THRESHOLD_PLUS, item(Material.LIME_DYE, ChatColor.GREEN + "+ 1秒"));
 
         inventory.setItem(SLOT_RANK1_REMOVE, rankRemoveItem(entries, 1));

@@ -32,6 +32,8 @@ public final class PlacementListener implements Listener {
                 event.getPlayer().getUniqueId(),
                 event.getPlayer().getName(),
                 event.getBlockPlaced().getType().name(),
+                PlacementKind.BLOCK,
+                event.getBlock().getX(), event.getBlock().getY(), event.getBlock().getZ(),
                 System.currentTimeMillis());
         tracker.record(chunk, record);
     }
@@ -44,11 +46,14 @@ public final class PlacementListener implements Listener {
         if (event.getPlayer() == null) {
             return;
         }
-        ChunkKey chunk = ChunkKey.of(event.getEntity().getLocation().getChunk());
+        var loc = event.getEntity().getLocation();
+        ChunkKey chunk = ChunkKey.of(loc.getChunk());
         PlacementRecord record = new PlacementRecord(
                 event.getPlayer().getUniqueId(),
                 event.getPlayer().getName(),
                 event.getEntity().getType().name(),
+                PlacementKind.ENTITY,
+                loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(),
                 System.currentTimeMillis());
         tracker.record(chunk, record);
     }
