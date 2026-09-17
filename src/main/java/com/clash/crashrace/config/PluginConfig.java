@@ -115,6 +115,31 @@ public final class PluginConfig {
         return cfg().getBoolean("mitigation.clear-redstone", true);
     }
 
+    // --- discord ---
+    public boolean discordEnabled() {
+        return cfg().getBoolean("discord.enabled", false);
+    }
+
+    public String discordBotToken() {
+        return cfg().getString("discord.bot-token", "");
+    }
+
+    public String discordChannelId() {
+        return cfg().getString("discord.channel-id", "");
+    }
+
+    public boolean discordNotifyOnStart() {
+        return cfg().getBoolean("discord.notify-on-start", true);
+    }
+
+    public boolean discordNotifyOnDetection() {
+        return cfg().getBoolean("discord.notify-on-detection", true);
+    }
+
+    public boolean discordNotifyOnEnd() {
+        return cfg().getBoolean("discord.notify-on-end", true);
+    }
+
     // --- scoreboard ---
     public int scoreboardUpdateIntervalTicks() {
         return cfg().getInt("scoreboard.update-interval-ticks", 20);
