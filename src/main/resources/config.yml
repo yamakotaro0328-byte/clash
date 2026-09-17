@@ -62,6 +62,22 @@ mitigation:
   # チャンク全体のスキャンは行わず、記録済み座標のみを対象にするため軽量。
   clear-redstone: true
 
+discord:
+  # Discord Botによる通知を有効にするか。有効にするには bot-token と channel-id の両方が必要。
+  enabled: false
+  # Discord Developer PortalでBotを作成した際のトークン。
+  # (Webhook URLではなく、実際にBotアカウントとして認証してメッセージを送信します)
+  bot-token: ""
+  # 通知先チャンネルのID(Discordでチャンネルを右クリック→IDをコピー、開発者モードが必要)
+  channel-id: ""
+  # 大会開始時に通知するか
+  notify-on-start: true
+  # 検知(順位確定)のたびに通知するか。メインスレッドの復帰を待たずに送信されるため、
+  # 万が一その直後に実際にクラッシュしても結果がDiscordには残る。
+  notify-on-detection: true
+  # 大会終了時に最終結果を通知するか
+  notify-on-end: true
+
 scoreboard:
   # サイドバー表示の更新間隔(tick)
   update-interval-ticks: 20

@@ -4,6 +4,7 @@ import com.clash.crashrace.board.RaceScoreboard;
 import com.clash.crashrace.config.PluginConfig;
 import com.clash.crashrace.detect.CulpritResolver;
 import com.clash.crashrace.detect.ResolvedCulprit;
+import com.clash.crashrace.discord.DiscordNotifier;
 import com.clash.crashrace.mitigate.ChunkMitigator;
 import com.clash.crashrace.rank.RankEntry;
 import com.clash.crashrace.rank.RankingManager;
@@ -24,6 +25,7 @@ public final class EventManager {
     private final RaceScoreboard scoreboard;
     private final HeartbeatKeeper heartbeat = new HeartbeatKeeper();
     private final ChunkMitigator mitigator;
+    private final DiscordNotifier discord;
 
     private volatile EventState state = EventState.IDLE;
     private volatile long endTimeMs = 0L;
@@ -37,6 +39,7 @@ public final class EventManager {
         this.rankingManager = rankingManager;
         this.scoreboard = new RaceScoreboard(config, rankingManager);
         this.mitigator = new ChunkMitigator(plugin, config);
+        this.discord = new DiscordNotifier(plugin, config);
     }
 
     public EventState state() {
@@ -67,6 +70,9 @@ public final class EventManager {
 
         Bukkit.broadcastMessage(ChatColor.RED + "[CrashRace] " + ChatColor.WHITE
                 + "大会がスタートしました！ 制限時間: " + durationMinutes + "分");
+        if (config.discordNotifyOnStart()) {
+            discord.send("🏁 CrashRace 大会がスタートしました！ 制限時間: " + durationMinutes + "分");
+        }
     }
 
     public void extend(int minutes) {
@@ -138,6 +144,15 @@ public final class EventManager {
                 + " (world " + culprit.chunk().worldName() + ", score " + culprit.score() + ")"
                 + (entry != null ? " -> rank " + entry.rank() : " (ranking already full)"));
 
+        // Sent straight from this thread (not the main-thread task below): if the server truly
+        // crashes right after this, the result still reaches Discord instead of being lost with
+        // everything in-memory.
+        if (entry != null && config.discordNotifyOnDetection()) {
+            discord.send("⚠️ " + entry.rank() + "位: " + culprit.playerName() + " の装置が検知されました！"
+                    + " (チャンク " + culprit.chunk().chunkX() + "," + culprit.chunk().chunkZ()
+                    + " / ワールド " + culprit.chunk().worldName() + ")");
+        }
+
         // Hop back onto the main thread for anything touching live world/player state; this task
         // simply waits in queue if the main thread is still catching up from the hang.
         Bukkit.getScheduler().runTask(plugin, () -> {
@@ -158,12 +173,18 @@ public final class EventManager {
         scoreboard.update(0);
         Bukkit.broadcastMessage(ChatColor.RED + "[CrashRace] " + ChatColor.WHITE + "大会終了！結果発表:");
         var entries = rankingManager.list();
+        StringBuilder discordMessage = new StringBuilder("🏆 CrashRace 大会終了！結果発表:");
         if (entries.isEmpty()) {
             Bukkit.broadcastMessage(ChatColor.GRAY + "誰も検知されませんでした。");
-            return;
+            discordMessage.append("\n誰も検知されませんでした。");
+        } else {
+            for (RankEntry entry : entries) {
+                Bukkit.broadcastMessage(ChatColor.YELLOW + "" + entry.rank() + "位: " + ChatColor.WHITE + entry.playerName());
+                discordMessage.append('\n').append(entry.rank()).append("位: ").append(entry.playerName());
+            }
         }
-        for (RankEntry entry : entries) {
-            Bukkit.broadcastMessage(ChatColor.YELLOW + "" + entry.rank() + "位: " + ChatColor.WHITE + entry.playerName());
+        if (config.discordNotifyOnEnd()) {
+            discord.send(discordMessage.toString());
         }
     }
 }

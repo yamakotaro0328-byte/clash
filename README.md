@@ -18,6 +18,9 @@
   ピストン連打やレッドストーン点滅によるハングにも対処できます。対象範囲をチャンク単位・
   記録済み座標のみに限定しているため、別途導入する軽量化プラグインと併用できます。
 - **adminGUI**: イベント時間・延長・検知感度・自動終了・順位の手動修正をGUIから設定できます。
+- **Discord Bot通知**: 大会の開始・検知・終了結果をDiscordチャンネルへ通知できます。検知通知は
+  メインスレッドの復帰を待たずに送信されるため、万が一その直後に実際にクラッシュしても
+  結果がDiscord側には残ります。
 
 ## 動作環境
 
@@ -78,6 +81,20 @@ Actionsタブの実行結果から Artifact としてダウンロードできま
 再検知を抑制するための設定です。クールダウン時間が経過し、かつ心拍の遅延が
 `recovery-threshold-ms` を下回るまで(=サーバーが実際に落ち着くまで)次の検知は行われません。
 これにより、TPS回復中に居合わせただけの別プレイヤーを誤って検知してしまうのを防ぎます。
+
+## Discord Bot通知のセットアップ
+
+1. [Discord Developer Portal](https://discord.com/developers/applications) でアプリケーションを
+   作成し、「Bot」タブからBotを追加してトークンを発行する
+2. OAuth2 URL Generator で scope に `bot`、permission に `Send Messages` を選び、
+   生成されたURLでBotを通知したいサーバーに招待する
+3. 通知先チャンネルのIDを取得する(Discordの設定 → 詳細設定 → 開発者モードを有効化した上で、
+   チャンネルを右クリック →「IDをコピー」)
+4. `config.yml` の `discord.enabled` を `true` にし、`bot-token` と `channel-id` を設定する
+
+Webhook URLではなく、実際にBotアカウントのトークンでDiscord REST APIを直接呼び出す方式です
+(ゲートウェイ接続は行わない一方向の通知のみなので、追加ライブラリなしで動作します)。
+`bot-token` は秘密情報です。config.ymlをGit等で公開しないよう注意してください。
 
 ## 注意事項
 
