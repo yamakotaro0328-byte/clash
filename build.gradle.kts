@@ -17,9 +17,9 @@ repositories {
 }
 
 dependencies {
-    // Paper 26.3 (Minecraft "Wilderness Bound", released 2026-09-16). This artifact declares a
+    // Paper 26.2 (Minecraft "Chaos Cubed", released 2026-06-17). This artifact declares a
     // minimum JVM runtime of 25, so the build toolchain must be 25 as well.
-    compileOnly("io.papermc.paper:paper-api:26.3.build.8-alpha")
+    compileOnly("io.papermc.paper:paper-api:26.2.build.124-stable")
 }
 
 tasks.compileJava {

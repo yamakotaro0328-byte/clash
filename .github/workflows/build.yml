@@ -16,7 +16,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # paper-api 26.3 requires a Java 25 toolchain to compile against, but Gradle 8.14.3
+      # paper-api 26.2 requires a Java 25 toolchain to compile against, but Gradle 8.14.3
       # itself cannot run on a JDK 25 daemon. Install JDK 25 first (only its JAVA_HOME_25_X64
       # env var is used, for Gradle's toolchain auto-detection), then JDK 21 last so it becomes
       # JAVA_HOME and actually launches Gradle - mirrors the local dev setup.
