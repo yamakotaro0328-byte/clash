@@ -24,7 +24,7 @@
 
 ## 動作環境
 
-- Minecraft / Paper **26.3**(2026-09-16リリース、"Wilderness Bound")
+- Minecraft / Paper **26.2**(2026-06-17リリース、"Chaos Cubed")
 - サーバー実行には **Java 25** 以上が必要です
 
 ## ビルド方法
