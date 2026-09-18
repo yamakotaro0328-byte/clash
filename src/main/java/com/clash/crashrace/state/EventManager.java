@@ -9,6 +9,7 @@ import com.clash.crashrace.mitigate.ChunkMitigator;
 import com.clash.crashrace.rank.RankEntry;
 import com.clash.crashrace.rank.RankingManager;
 import com.clash.crashrace.track.PlacementTracker;
+import com.clash.crashrace.util.DurationFormat;
 import com.clash.crashrace.watchdog.HangWatcherThread;
 import com.clash.crashrace.watchdog.HeartbeatKeeper;
 import org.bukkit.Bukkit;
@@ -69,9 +70,9 @@ public final class EventManager {
         tickTask = Bukkit.getScheduler().runTaskTimer(plugin, this::onTick, 0L, 20L);
 
         Bukkit.broadcastMessage(ChatColor.RED + "[CrashRace] " + ChatColor.WHITE
-                + "大会がスタートしました！ 制限時間: " + durationMinutes + "分");
+                + "大会がスタートしました！ 制限時間: " + DurationFormat.formatMinutes(durationMinutes));
         if (config.discordNotifyOnStart()) {
-            discord.send("🏁 CrashRace 大会がスタートしました！ 制限時間: " + durationMinutes + "分");
+            discord.send("🏁 CrashRace 大会がスタートしました！ 制限時間: " + DurationFormat.formatMinutes(durationMinutes));
         }
     }
 
@@ -82,7 +83,7 @@ public final class EventManager {
         endTimeMs += minutes * 60_000L;
         scoreboard.update(remainingMs());
         Bukkit.broadcastMessage(ChatColor.RED + "[CrashRace] " + ChatColor.WHITE
-                + "イベントが" + minutes + "分延長されました！");
+                + "イベントが" + DurationFormat.formatMinutes(minutes) + "延長されました！");
     }
 
     public void stop() {

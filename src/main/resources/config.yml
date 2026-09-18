@@ -2,10 +2,10 @@
 # adminGUI (/crashrace admin) からもほとんどの値を変更できます。
 
 event:
-  # /crashrace start で分数指定を省略した場合のデフォルト時間(分)
-  default-duration-minutes: 15
+  # /crashrace start で分数指定を省略した場合のデフォルト時間(分)。デフォルトは1週間(10080分)。
+  default-duration-minutes: 10080
   # 1回の延長で追加する分数 (adminGUIの延長ボタン)
-  extend-step-minutes: 5
+  extend-step-minutes: 60
   # 1位〜3位が全員決まったら自動的にイベントを終了するか
   auto-end-when-full: true
   # 同じプレイヤーが複数の順位を占めないようにするか (true推奨)

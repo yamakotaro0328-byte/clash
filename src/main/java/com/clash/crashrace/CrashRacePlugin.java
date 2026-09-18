@@ -1,5 +1,6 @@
 package com.clash.crashrace;
 
+import com.clash.crashrace.board.ScoreboardJoinListener;
 import com.clash.crashrace.commands.CrashRaceCommand;
 import com.clash.crashrace.config.PluginConfig;
 import com.clash.crashrace.gui.AdminGui;
@@ -24,6 +25,7 @@ public final class CrashRacePlugin extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new PlacementListener(eventManager, tracker), this);
         getServer().getPluginManager().registerEvents(new AdminGuiListener(adminGui), this);
+        getServer().getPluginManager().registerEvents(new ScoreboardJoinListener(eventManager.scoreboard()), this);
 
         CrashRaceCommand command = new CrashRaceCommand(eventManager, config, adminGui);
         var pluginCommand = getCommand("crashrace");
