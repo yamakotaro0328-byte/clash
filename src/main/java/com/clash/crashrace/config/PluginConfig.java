@@ -29,11 +29,11 @@ public final class PluginConfig {
 
     // --- event ---
     public int defaultDurationMinutes() {
-        return cfg().getInt("event.default-duration-minutes", 15);
+        return cfg().getInt("event.default-duration-minutes", 10080);
     }
 
     public int extendStepMinutes() {
-        return cfg().getInt("event.extend-step-minutes", 5);
+        return cfg().getInt("event.extend-step-minutes", 60);
     }
 
     public boolean autoEndWhenFull() {

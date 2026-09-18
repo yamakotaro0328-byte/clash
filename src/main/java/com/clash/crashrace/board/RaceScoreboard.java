@@ -3,6 +3,7 @@ package com.clash.crashrace.board;
 import com.clash.crashrace.config.PluginConfig;
 import com.clash.crashrace.rank.RankEntry;
 import com.clash.crashrace.rank.RankingManager;
+import com.clash.crashrace.util.DurationFormat;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -39,6 +40,18 @@ public final class RaceScoreboard {
         render(remainingMs);
     }
 
+    public boolean isActive() {
+        return scoreboard != null;
+    }
+
+    /** Re-applies the current board to one player, e.g. a player who joins mid-event and would
+     *  otherwise be stuck on the server's default scoreboard until the event ends. */
+    public void applyTo(Player player) {
+        if (scoreboard != null) {
+            player.setScoreboard(scoreboard);
+        }
+    }
+
     public void hideFromAll() {
         Scoreboard main = Bukkit.getScoreboardManager().getMainScoreboard();
         for (Player player : Bukkit.getOnlinePlayers()) {
@@ -61,7 +74,7 @@ public final class RaceScoreboard {
         }
 
         int line = 15;
-        objective.getScore(ChatColor.GRAY + "残り時間: " + ChatColor.WHITE + formatDuration(remainingMs)).setScore(line--);
+        objective.getScore(ChatColor.GRAY + "残り時間: " + ChatColor.WHITE + DurationFormat.format(remainingMs)).setScore(line--);
         objective.getScore(" ").setScore(line--);
 
         var entries = rankingManager.list();
@@ -75,15 +88,5 @@ public final class RaceScoreboard {
             String name = entry != null ? entry.playerName() : "----";
             objective.getScore(labels[i] + ChatColor.WHITE + name + suffix).setScore(line--);
         }
-    }
-
-    private String formatDuration(long ms) {
-        if (ms < 0) {
-            ms = 0;
-        }
-        long totalSeconds = ms / 1000;
-        long minutes = totalSeconds / 60;
-        long seconds = totalSeconds % 60;
-        return String.format("%02d:%02d", minutes, seconds);
     }
 }

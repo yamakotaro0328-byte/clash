@@ -5,6 +5,7 @@ import com.clash.crashrace.rank.RankEntry;
 import com.clash.crashrace.rank.RankingManager;
 import com.clash.crashrace.state.EventManager;
 import com.clash.crashrace.state.EventState;
+import com.clash.crashrace.util.DurationFormat;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -65,7 +66,7 @@ public final class AdminGui {
         inventory.setItem(SLOT_START, item(Material.LIME_WOOL,
                 ChatColor.GREEN + "▶ 大会スタート / 再スタート",
                 "現在の状態: " + stateLabel(),
-                "デフォルト時間: " + config.defaultDurationMinutes() + "分",
+                "デフォルト時間: " + DurationFormat.formatMinutes(config.defaultDurationMinutes()),
                 "",
                 "クリックでスタートします"));
 
@@ -80,7 +81,7 @@ public final class AdminGui {
         List<String> statusLore = new ArrayList<>();
         statusLore.add("状態: " + stateLabel());
         if (eventManager.state() == EventState.RUNNING) {
-            statusLore.add("残り時間: " + formatMs(eventManager.remainingMs()));
+            statusLore.add("残り時間: " + DurationFormat.format(eventManager.remainingMs()));
         }
         statusLore.add("");
         statusLore.add(ChatColor.GOLD + "--- 現在の順位 ---");
@@ -97,7 +98,7 @@ public final class AdminGui {
                 statusLore.toArray(new String[0])));
 
         inventory.setItem(SLOT_EXTEND, item(Material.EMERALD,
-                ChatColor.GREEN + "+ " + config.extendStepMinutes() + "分延長",
+                ChatColor.GREEN + "+ " + DurationFormat.formatMinutes(config.extendStepMinutes()) + "延長",
                 "実行中のみ有効です"));
 
         inventory.setItem(SLOT_AUTO_END, item(Material.COMPARATOR,
@@ -221,11 +222,6 @@ public final class AdminGui {
 
     private String onOff(boolean value) {
         return value ? ChatColor.GREEN + "ON" : ChatColor.RED + "OFF";
-    }
-
-    private String formatMs(long ms) {
-        long totalSeconds = ms / 1000;
-        return String.format("%02d:%02d", totalSeconds / 60, totalSeconds % 60);
     }
 
     private ItemStack item(Material material, String name, String... lore) {
